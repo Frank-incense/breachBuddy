@@ -1,0 +1,56 @@
+# --- Python bytecode ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtual environments ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- Distribution / packaging ---
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Installer logs ---
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Test / coverage artifacts ---
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Environment files ---
+.env
+.env.*
+
+# --- SQLite DB files ---
+*.db
+*.sqlite3
+
+# (If you only want to ignore the specific pawned.db, use:)
+# /pawned.db
+
+# --- Alembic caches ---
+migrations/**/__pycache__/
+
+# --- IDE/editor folders ---
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
