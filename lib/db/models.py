@@ -1,11 +1,14 @@
 from sqlalchemy import (Table, ForeignKey, Column, Integer, String, DateTime, func)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship, backref, Session
 
 Base = declarative_base()
-
+session = Session()
 
 class User(Base):
+
+    all = {}
+
     __tablename__ = 'users'
     id = Column(Integer(), primary_key=True)
     username = Column(String(), nullable=False)
@@ -13,6 +16,44 @@ class User(Base):
 
     emails = relationship("EmailCheck", backref=backref("user"))
     passwords = relationship("PasswordCheck", backref=backref("user"))
+    
+    @property
+    def username(self):
+        return self._username
+    
+    @username.setter
+    def username(self, name):
+        if isinstance(name, str) and 0 < len(name) < 15:
+            user = session.query(type(self)).filter_by(username=self.name)
+            user.username = name
+            self._username = name
+            session.commit()
+            
+        else:
+            return "Error: name not string"
+        
+
+    def __repr__(self):
+        return f"<User: {self.id}, username: {self.username}>"
+    
+    @classmethod
+    def create_user(cls, name):
+        user = cls(username=name)
+        session.add(user)
+        session.commit()
+
+        cls.all[user.id] = user
+    
+    @classmethod
+    def find_by_id(cls, id):
+        user = session.query(cls).filter_by(id=int(id))
+        return user
+    
+    @classmethod
+    def find_by_name(cls, name):
+        user = session.query(cls).filter_by(username=name)
+        return user
+
 
 class PasswordCheck(Base):
     __tablename__ = "password_checks"
