@@ -53,6 +53,12 @@ class User(Base):
     def find_by_name(cls, name):
         user = session.query(cls).filter_by(username=name)
         return user
+    
+    @classmethod
+    def get_all(cls):
+        users = session.query(User).fetchall()
+        return [user for user in users]
+    
 
 
 class PasswordCheck(Base):
