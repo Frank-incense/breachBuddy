@@ -40,7 +40,7 @@ htmlcov/
 *.sqlite3
 
 # (If you only want to ignore the specific pawned.db, use:)
-# /pawned.db
+/pawned.db
 
 # --- Alembic caches ---
 migrations/**/__pycache__/
