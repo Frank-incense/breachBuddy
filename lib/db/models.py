@@ -1,8 +1,11 @@
-from sqlalchemy import (Table, ForeignKey, Column, Integer, String, DateTime, func)
+from sqlalchemy import (create_engine, Table, ForeignKey, select, Column, Integer, String, DateTime, func)
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref, Session
+from sqlalchemy.orm import relationship, backref, sessionmaker
+from pawned import checkPassword
 
+engine = create_engine('sqlite:///pawned.db')
 Base = declarative_base()
+Session = sessionmaker(bind=engine)
 session = Session()
 
 class User(Base):
@@ -57,18 +60,34 @@ class User(Base):
     @classmethod
     def get_all(cls):
         users = session.query(User).fetchall()
-        return [user for user in users]
+        return [user for user in users] if users else None
     
+    @classmethod
+    def most_password_counts():
+        statement = select(User.username).select_
+    
+    def get_password_checks(self):
+        statement = select(type(self).username, PasswordCheck.hash, 
+            PasswordCheck.checkedAt, PasswordCheck.hash_count).select_from(User).join(
+                PasswordCheck, PasswordCheck.user_id == User.id
+            )
+        rows = session.execute(statement)
+        return [row for row in rows] if rows else None
+    
+    def password_check(self):
+        checkPassword(self.id)
 
 
 class PasswordCheck(Base):
     __tablename__ = "password_checks"
     id = Column(Integer(), primary_key=True)
-    hash_prefix = Column(String(), nullable=False)
+    hash = Column(String(), nullable=False)
     checkedAt = Column(DateTime(), server_default=func.now())
     hash_count = Column(Integer(), nullable=False)
 
     user_id = Column(Integer(), ForeignKey('users.id'))
+
+
 
 mail_breachs = Table(
     'mail_breachs',

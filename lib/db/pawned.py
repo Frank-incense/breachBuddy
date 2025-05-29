@@ -9,7 +9,7 @@ def checkPassword(id):
     print(password_hash)
     try: 
         pass_res = requests.get(f"https://api.pwnedpasswords.com/range/{password_hash[0:5]}")
-        
+        print("Checking database for hash matches")
         if pass_res.status_code != 200:
             raise HTTPError
         
@@ -29,11 +29,11 @@ def checkPassword(id):
             if password_hash.upper() == password_hash[0:5].upper()+pre:
                 print(password_hash, "=", password_hash[0:5]+pre )
                 pass_count = int(suf)
-                # PasswordCheck(
-                #     user_id= id,
-                #     hash_count = pass_count,
-                #     hash_prefix =password_hash[0:5],
-                #     )
+                PasswordCheck(
+                    user_id= id,
+                    hash_count = pass_count,
+                    hash_prefix =password_hash[0:5],
+                    )
 
         if pass_count:
             print("Kindly Ensure you change passwords of accounts using this password.")
