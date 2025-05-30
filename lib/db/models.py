@@ -1,7 +1,8 @@
+
 from sqlalchemy import (create_engine, Table, ForeignKey, select, Column, Integer, String, DateTime, func)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
-from pawned import checkPassword
+from .pawned import checkPassword, checkEmail
 
 engine = create_engine('sqlite:///pawned.db')
 Base = declarative_base()
@@ -60,11 +61,8 @@ class User(Base):
     @classmethod
     def get_all(cls):
         users = session.query(User).fetchall()
-        return [user for user in users] if users else None
+        return  users if users else None
     
-    @classmethod
-    def most_password_counts():
-        statement = select(User.username).select_
     
     def get_password_checks(self):
         statement = select(type(self).username, PasswordCheck.hash, 
@@ -74,9 +72,19 @@ class User(Base):
         rows = session.execute(statement)
         return [row for row in rows] if rows else None
     
+    def get_email_checks(self):
+        statement = select(type(self).username, EmailCheck.email_checked, 
+            EmailCheck.date_checked).select_from(User).join(
+                EmailCheck, EmailCheck.user_id == User.id
+            )
+        rows = session.execute(statement)
+        return [row for row in rows] if rows else None
+    
     def password_check(self):
         checkPassword(self.id)
 
+    def email_check(self):
+        checkEmail(self.id)
 
 class PasswordCheck(Base):
     __tablename__ = "password_checks"

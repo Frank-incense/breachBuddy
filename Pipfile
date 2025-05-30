@@ -10,6 +10,9 @@ alembic = "*"
 faker = "*"
 pytest = "*"
 requests = "*"
+click = "*"
+pyfiglet = "*"
+tabulate = "*"
 
 [dev-packages]
 
