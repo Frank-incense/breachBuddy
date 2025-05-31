@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from .pawned import checkPassword, checkEmail
 
-engine = create_engine('sqlite:///pawned.db')
+engine = create_engine('sqlite:///lib/db/pawned.db')
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -21,20 +21,19 @@ class User(Base):
     emails = relationship("EmailCheck", backref=backref("user"))
     passwords = relationship("PasswordCheck", backref=backref("user"))
     
-    @property
-    def username(self):
-        return self._username
+    # @property
+    # def username(self):
+    #     return self.username
     
-    @username.setter
-    def username(self, name):
-        if isinstance(name, str) and 0 < len(name) < 15:
-            user = session.query(type(self)).filter_by(username=self.name)
-            user.username = name
-            self._username = name
-            session.commit()
+    # @username.setter
+    # def username(self, name):
+    #     if isinstance(name, str) and 0 < len(name) < 15:
+    #         user = session.query(type(self)).filter_by(username=name)
+    #         user.update({User.username: name})
+    #         session.commit()
             
-        else:
-            return "Error: name not string"
+    #     else:
+    #         return "Error: name not string"
         
 
     def __repr__(self):
@@ -47,6 +46,7 @@ class User(Base):
         session.commit()
 
         cls.all[user.id] = user
+        return user
     
     @classmethod
     def find_by_id(cls, id):
@@ -87,6 +87,9 @@ class User(Base):
         checkEmail(self.id)
 
 class PasswordCheck(Base):
+
+    all = {}
+
     __tablename__ = "password_checks"
     id = Column(Integer(), primary_key=True)
     hash = Column(String(), nullable=False)
@@ -94,6 +97,18 @@ class PasswordCheck(Base):
     hash_count = Column(Integer(), nullable=False)
 
     user_id = Column(Integer(), ForeignKey('users.id'))
+
+    def __repr__(self):
+        return f"<Password: {self.id}, Password: {self.hash[:5]} Occurrances: {self.hash_count}>"
+
+    @classmethod
+    def create_password(cls, hash, hashcount, id):
+        passCheck = cls(hash = hash, hash_count=hashcount, user_id=id )
+        session.add(passCheck)
+        session.commit()
+
+        cls.all[passCheck.id] = passCheck
+        return passCheck
 
 
 
@@ -107,6 +122,9 @@ mail_breachs = Table(
 
 # For further improvements of the app To check email breachs
 class EmailCheck(Base):
+
+    all = {}
+
     __tablename__ = "email_checks"
     id = Column(Integer(), primary_key=True)
     email_checked = Column(String(), nullable=False)
@@ -114,9 +132,24 @@ class EmailCheck(Base):
     no_of_breaches = Column(Integer(), nullable=False)
 
     user_id = Column(Integer(), ForeignKey('users.id'))
-    breaches = relationship("Breach", secondary=mail_breachs, back_populates="breachs")
+    breaches = relationship("Breach", secondary=mail_breachs, back_populates="emailChecks")
 
+    def __repr__(self):
+        return f"<Email: {self.id}, email: {self.email_checked} Number of breaches: {self.no_of_breaches}>"
+
+    @classmethod
+    def create_email(cls, email, num_of_breaches, id):
+        mailCheck = cls(email_checked= email, no_of_breaches=num_of_breaches, user_id=id )
+        session.add(mailCheck)
+        session.commit()
+
+        cls.all[mailCheck.id] = mailCheck
+        return mailCheck
+    
 class Breach(Base):
+
+    all = {}
+
     __tablename__ = "breachs"
     id = Column(Integer(), primary_key=True)
     name = Column(String(), nullable=False)
@@ -124,4 +157,16 @@ class Breach(Base):
     breachDate = Column(String(), nullable=False)
     exposedData = Column(String(), nullable=False)
 
-    emailChecks = relationship("EmailCheck", secondary=mail_breachs, back_populates="email_checks") 
+    emailChecks = relationship("EmailCheck", secondary=mail_breachs, back_populates="breaches") 
+
+    def __repr__(self):
+        return f"<Breach: {self.id}, name: {self.name} domain: {self.domain}>"
+
+    @classmethod
+    def create_breach(cls, name, domain, breachDate, exposedData):
+        breachCheck = cls(name=name, domain=domain, breachDate=breachDate, exposedData=exposedData )
+        session.add(breachCheck)
+        session.commit()
+
+        cls.all[breachCheck.id] = breachCheck
+        return breachCheck

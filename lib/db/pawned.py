@@ -4,7 +4,7 @@ import getpass, hashlib, re
 
 email_api_url = "https://haveibeenpwned.com/api/v3/breachedaccount/"
 password_api_url = "https://api.pwnedpasswords.com/range/"
-hibp_api_key = ""
+hibp_api_key = "f4cc6062971845c890b231e94481cdd9"
 
 def checkPassword(id):
     password = getpass.getpass("Input a password: ")
@@ -31,22 +31,22 @@ def checkPassword(id):
         pass_matches = pass_res.text.splitlines()
         pass_count = 0
         
-        from models import PasswordCheck
+        from .models import PasswordCheck
         for hash in pass_matches:
             pre, suf = hash.split(":")
             
             if password_hash.upper() == password_hash[0:5].upper()+pre:
                 print(password_hash, "=", password_hash[0:5]+pre )
                 pass_count = int(suf)
-                PasswordCheck(
-                    user_id= id,
-                    hash_count = pass_count,
-                    hash_prefix =password_hash[0:5],
+                PasswordCheck.create_password(
+                    id= id,
+                    hashcount = pass_count,
+                    hash =password_hash,
                     )
 
         if pass_count:
             print("Kindly Ensure you change passwords of accounts using this password.")
-            print(f"Password has appeared {pass_count:,}in the database")
+            print(f"Password has appeared {pass_count:,} times in the database")
         
         else:
             print("Phewks. You're safe for now. Remember to keep good cyber Hygiene and Password keeping practices.")
@@ -55,14 +55,14 @@ def checkEmail(id):
     email_pattern = r"[a-z][a-z0-9.]+[a-z0-9]+@[a-z.]+.[a-z]+"
     emailcheck = re.compile(email_pattern)
     email = ""
-    
+    count = 0
     while not emailcheck.match(email):
         email = input("Please input your email address: ")
         if not emailcheck.match(email):
             print("Kindly input a correct email format.")
     
     headers = {
-        "Authorization": f"Bearer {hibp_api_key}"
+        "hibp-api-key": hibp_api_key
     }
     try:
         email_res = requests.get(f"{email_api_url}{email}/?truncateResponse=false", headers=headers)
@@ -75,14 +75,11 @@ def checkEmail(id):
         print(f"HTTP error: {http}")
     else:
         emails = email_res.json()
-        from models import EmailCheck, Breach
-        for email in emails:
-            email["name"]
+        from .models import EmailCheck, Breach
+        
+        for em in emails:
+            print(em['Name'])
+            Breach.create_breach(name=em['Name'],domain=em['Domain'], breachDate=em['BreachDate'], exposedData=", ".join(em['DataClasses']))
+            # count += 1
 
-#  frankincense.okwemba@student.moringaschool.com
-# checkEmail()
-
-# may 15 16 19
-# june 17 18
-# july 14 16
-# August 14 15 17
+    EmailCheck.create_email(email=email, num_of_breaches=count,id=id)

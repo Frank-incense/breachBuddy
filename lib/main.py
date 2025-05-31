@@ -1,9 +1,9 @@
 from helper import (check_email, check_password, create_user, 
-                    see_users, view_report, get_user)
+                    see_users, render_dash, get_user)
 from pyfiglet import Figlet
 import click
 import getpass
-from rich
+
 
 fig = Figlet(font="slant")
 BANNER = fig.renderText("BreachBuddy")
@@ -27,7 +27,7 @@ def login():
     print(BANNER)
     print("Credential Exposure Checker | v1.0.0")
     print("Check whether your emails and passwords are exposed through leaks.")
-    isUser = ("Are you a user [Y/N]: ")
+    isUser = input("Are you a user [Y/N]: ")
     if isUser.lower() == "n":
         create_user()
     elif isUser.lower() == "y":
@@ -54,10 +54,18 @@ def menu(user):
     choice = input("\nEnter your choice: ").strip()
     return choice
 
+def command_call(choice, user):
+    if choice == "1":
+        check_email(user)
+    elif choice == "2":
+        check_password(user)
 
 
 if __name__ == "__main__":
-    user = login()
+    user = login().first()
+    print(user.username)
     while True:
+        render_dash(user)
         choice = menu(user)
+        command_call(choice=choice, user=user)
         

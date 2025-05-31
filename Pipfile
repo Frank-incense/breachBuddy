@@ -13,6 +13,7 @@ requests = "*"
 click = "*"
 pyfiglet = "*"
 tabulate = "*"
+rich = "*"
 
 [dev-packages]
 
