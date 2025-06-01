@@ -60,13 +60,9 @@ def command_call(choice, user):
         elif choice == "2":
             check_password(user)
         elif choice == "3":
-            # TO:DO
-            # 1. Display user History
             console.clear()
             render_breachs(user=user)
         elif choice == "4" and user.username == "admin":
-            # TO: DO
-            # 3. Delete users
             console.clear()
             print("""
             [1] Display users
