@@ -1,11 +1,11 @@
-# 🛡️ BreachBuddy CLI
-## 📘 Overview
+# BreachBuddy CLI
+## Overview
 
 BreachBuddy is a CLI (Command Line Interface) application developed in Python that helps users check whether their email addresses or passwords have been exposed in public data breaches using the HaveIBeenPwned API. It stores results in a local SQLite database, providing a record of checks conducted and enabling users to review their digital security history.
 
 This tool is intended to promote security awareness and make it easier for individuals to verify the safety of their credentials without needing technical expertise.
 
-## 🎯 Project Objectives
+## Project Objectives
 - Provide a simple command-line utility to check:
     - If an email has appeared in a known data breach
 
@@ -15,7 +15,7 @@ This tool is intended to promote security awareness and make it easier for indiv
 
 - Demonstrate how CLI apps can integrate with external APIs and databases
 
-## ✅ Achievements
+## Achievements
 
 - Built a working CLI interface using Python
 
@@ -33,7 +33,7 @@ This tool is intended to promote security awareness and make it easier for indiv
 
 - Ensured data persistence and user-based separation of checks
 
-## ⚠️ Challenges
+## Challenges
 
 - Mapping API response structures into normalized relational models
 
@@ -45,7 +45,7 @@ This tool is intended to promote security awareness and make it easier for indiv
 
 - Managing setup environments and dependency versions across systems
 
-## 🧱 Database Schema
+## Database Schema
 **Key Tables**
 
 - `users`: Stores user account data.
@@ -69,7 +69,7 @@ users
 └───┬── 1:N ─── password_checks
 ```
 
-### 🛠️ Project Structure
+### Project Structure
 
 ```
 lib/
@@ -85,7 +85,7 @@ lib/
 ├── debug.py             # Debugging and testing functions
 ```
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 1. **Clone the repository**
     ```
     git clone https://github.com/yourusername/breachbuddy.git
@@ -103,7 +103,7 @@ lib/
     ```
     python lib/main.py
     ```
-## 🔍 Features
+## Features
 
 - Check if an email has been breached
 
@@ -117,7 +117,7 @@ lib/
 
 - User registration/authentication via CLI (planned)
 
-## 🧪 Sample Use Case
+## Sample Use Case
 
 1. User enters email to check:
 
