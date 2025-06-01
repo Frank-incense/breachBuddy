@@ -1,9 +1,9 @@
-from helper import (check_email, check_password, create_user, 
-                    see_users, render_dash, get_user)
+from helper import (check_email, check_password, create_user, render_breachs,
+                    see_users, render_dash, get_user, delete_user)
 from pyfiglet import Figlet
-import click
+from rich.console import Console
 import getpass
-
+console = Console()
 
 fig = Figlet(font="slant")
 BANNER = fig.renderText("BreachBuddy")
@@ -35,10 +35,9 @@ def login():
         name =input("Kindly input your username: ")
         user = get_user(int(id))
         if user:
-            print(f"Welcome back: {name}.")
-            (user)
+            console.print(f"[yellow]Welcome back: {name}.")
         else:
-            print(f"User: {name} not found. Input correct details.")
+            console.print(f"[red]User: {name} not found. Input correct details.")
     
     return user
 
@@ -51,14 +50,48 @@ def menu(user):
         data = OPTIONS
 
     print( data )
-    choice = input("\nEnter your choice: ").strip()
+    choice = console.input("\n[green]Enter your choice: ").strip()
     return choice
 
 def command_call(choice, user):
-    if choice == "1":
-        check_email(user)
-    elif choice == "2":
-        check_password(user)
+    try:
+        if choice == "1":
+            check_email(user)
+        elif choice == "2":
+            check_password(user)
+        elif choice == "3":
+            # TO:DO
+            # 1. Display user History
+            console.clear()
+            render_breachs(user=user)
+        elif choice == "4" and user.username == "admin":
+            # TO: DO
+            # 3. Delete users
+            console.clear()
+            print("""
+            [1] Display users
+            [2] Add users
+            [3] Delete users
+            [4] back
+            """)
+            choose = console.input("Choose an option: ")
+            if choose == '1':
+                see_users()
+            elif choose == '2':
+                create_user()
+            elif choose == '3':
+                delete_user(user=user)
+            else:
+                pass
+
+        elif choice == "4":
+            exit()
+        elif choice == "5":
+            exit()
+        else:
+            raise ValueError("Kindly input provided input options")
+    except ValueError as err:
+        console.print(f"[red]Error: {err}")
 
 
 if __name__ == "__main__":
@@ -68,4 +101,5 @@ if __name__ == "__main__":
         render_dash(user)
         choice = menu(user)
         command_call(choice=choice, user=user)
+        console.input("[bold]Press enter to continue.[/bold]")
         

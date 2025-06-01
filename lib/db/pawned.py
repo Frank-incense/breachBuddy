@@ -6,7 +6,7 @@ email_api_url = "https://haveibeenpwned.com/api/v3/breachedaccount/"
 password_api_url = "https://api.pwnedpasswords.com/range/"
 hibp_api_key = "f4cc6062971845c890b231e94481cdd9"
 
-def checkPassword(id):
+def checkPassword(user):
     password = getpass.getpass("Input a password: ")
     password_hash = hashlib.sha1(password.encode('utf-8')).hexdigest()
     print(password_hash)
@@ -39,7 +39,7 @@ def checkPassword(id):
                 print(password_hash, "=", password_hash[0:5]+pre )
                 pass_count = int(suf)
                 PasswordCheck.create_password(
-                    id= id,
+                    id= user.id,
                     hashcount = pass_count,
                     hash =password_hash,
                     )
@@ -51,7 +51,7 @@ def checkPassword(id):
         else:
             print("Phewks. You're safe for now. Remember to keep good cyber Hygiene and Password keeping practices.")
 
-def checkEmail(id):
+def checkEmail(user):
     email_pattern = r"[a-z][a-z0-9.]+[a-z0-9]+@[a-z.]+.[a-z]+"
     emailcheck = re.compile(email_pattern)
     email = ""
@@ -76,10 +76,13 @@ def checkEmail(id):
     else:
         emails = email_res.json()
         from .models import EmailCheck, Breach
-        
+        breach = []
         for em in emails:
             print(em['Name'])
-            Breach.create_breach(name=em['Name'],domain=em['Domain'], breachDate=em['BreachDate'], exposedData=", ".join(em['DataClasses']))
-            # count += 1
-
-    EmailCheck.create_email(email=email, num_of_breaches=count,id=id)
+            breach.append(Breach.create_breach(name=em['Name'],domain=em['Domain'], breachDate=em['BreachDate'], exposedData=", ".join(em['DataClasses'])))
+            count += 1
+        found = EmailCheck.find_email(em = email)
+        if not found:
+            EmailCheck.create_email(email=email, num_of_breaches=count, id=user.id, breach=breach)
+        else:
+            print("Email already in history select option 3 in the menu to view history.")

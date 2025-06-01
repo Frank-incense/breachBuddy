@@ -49,6 +49,11 @@ class User(Base):
         return user
     
     @classmethod
+    def delete_user(cls, id):
+        session.query(cls).filter_by(id=id).delete()
+        session.commit()
+
+    @classmethod
     def find_by_id(cls, id):
         user = session.query(cls).filter_by(id=int(id))
         return user
@@ -60,7 +65,7 @@ class User(Base):
     
     @classmethod
     def get_all(cls):
-        users = session.query(User).fetchall()
+        users = session.query(User)
         return  users if users else None
     
     
@@ -72,19 +77,16 @@ class User(Base):
         rows = session.execute(statement)
         return [row for row in rows] if rows else None
     
-    def get_email_checks(self):
-        statement = select(type(self).username, EmailCheck.email_checked, 
-            EmailCheck.date_checked).select_from(User).join(
-                EmailCheck, EmailCheck.user_id == User.id
-            )
-        rows = session.execute(statement)
-        return [row for row in rows] if rows else None
+    def get_email_checks(self,cls):
+        emails = session.query(cls).filter_by(user_id=self.id).all()
+        
+        return [row for row in emails] if emails else None
     
     def password_check(self):
-        checkPassword(self.id)
+        checkPassword(self)
 
     def email_check(self):
-        checkEmail(self.id)
+        checkEmail(self)
 
 class PasswordCheck(Base):
 
@@ -109,6 +111,11 @@ class PasswordCheck(Base):
 
         cls.all[passCheck.id] = passCheck
         return passCheck
+    
+    @classmethod
+    def delete_passcheck(cls, id):
+        session.query(cls).filter_by(id=id).delete()
+        session.commit()
 
 
 
@@ -138,13 +145,32 @@ class EmailCheck(Base):
         return f"<Email: {self.id}, email: {self.email_checked} Number of breaches: {self.no_of_breaches}>"
 
     @classmethod
-    def create_email(cls, email, num_of_breaches, id):
+    def create_email(cls, email, num_of_breaches, id, breach =None):
         mailCheck = cls(email_checked= email, no_of_breaches=num_of_breaches, user_id=id )
+        
+        if breach:
+            mailCheck.breaches.extend(breach)
+            
         session.add(mailCheck)
         session.commit()
 
         cls.all[mailCheck.id] = mailCheck
         return mailCheck
+    
+    @classmethod
+    def clear_table(cls):
+        session.query(cls).delete()
+        session.commit()
+    
+    @classmethod
+    def delete_email(cls, id):
+        session.query(cls).filter_by(id=id).delete()
+        session.commit()
+    
+    @classmethod
+    def find_email(cls, em):
+        email = session.query(cls).filter_by(email_checked = em)
+        return email if email else None
     
 class Breach(Base):
 
@@ -170,3 +196,8 @@ class Breach(Base):
 
         cls.all[breachCheck.id] = breachCheck
         return breachCheck
+    
+    @classmethod
+    def clear_table(cls):
+        session.query(cls).delete()
+        session.commit()

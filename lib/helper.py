@@ -1,4 +1,4 @@
-from db.models import User 
+from db.models import User, EmailCheck
 from tabulate import tabulate
 import click
 from rich.console import Console
@@ -8,17 +8,32 @@ from rich.align import Align
 
 def create_user():
     click.echo("You are adding a new user to the the database")
-    username = input("Input your user name: ")
+    username = input("Input a user name: ")
     user = User.create_user( username )
     return f"Success: {user.username} has been created." if user else "Error creating user."
+
+def delete_user(user):
+    print("Your are deleting a user from the database.")
+    console = Console()
+    id = console.input("[red]Input user id to be deleted: ")
+    User.delete_user(id=int(id))
+    print(f"User {user.username} has been deleted from the database.")
 
 def see_users():
     print("Printing all system users.")
     users = User.get_all()
+    console = Console()
     print("Generating users table")
+
     if users:
-        table = tabulate(users, headers=users.keys())
-        print(table)
+        table = Table(show_header=True, box=None, padding=(0, 1))
+
+        for user in users:
+            table.add_row(f"👤 [bold]User: {user.id}[/bold]", f"[cyan]{user.username}[/cyan]")
+        
+        panel = Panel(table, title="[green]System Users.", expand=False)
+        console.print(panel)
+
     else:
         print("Error: No users in the database")
 
@@ -35,9 +50,9 @@ def check_email(user):
 
 def render_dash(user):
     print("Printing report")
-    email = user.get_email_checks()
+    email = user.get_email_checks(EmailCheck)
     password = user.get_password_checks()
-    # breach = email.breaches
+    breaches = sum([e.no_of_breaches for e in email])
     
     console = Console()
     console.clear()
@@ -50,8 +65,27 @@ def render_dash(user):
     table.add_row("📅 [bold]Last Check[/bold]", f"[yellow] {email[0].date_checked if email else 0} [/yellow]")
     table.add_row("📧 [bold]Emails Scanned[/bold]", str(len(email)))
     table.add_row("🔑 [bold]Passwords Scanned[/bold]", str(len(password)))
-    table.add_row("🧨 [bold]Breaches Detected[/bold]", f"[red]{0}[/red]")
+    table.add_row("🧨 [bold]Breaches Detected[/bold]", f"[red]{breaches}[/red]")
 
     panel = Panel(table, title="[green]User Summary", expand=False)
+    console.print(panel)
+
+def render_breachs(user):
+    email = user.get_email_checks(EmailCheck)
+    
+    console = Console()
+    console.clear()
+
+    title = Align.center("[bold magenta] BreachBuddy - Credential Exposure Checker[/bold magenta]", vertical="top")
+    console.print(title)
+    
+    table = Table(show_header=False, box=None, padding=(0, 1))
+    for e in email:
+        print(e)
+        breaches = e.breaches
+        for breach in breaches:
+            table.add_row(f"[bold]{breach.name}[/bold]", f"[cyan]{breach.domain}[/cyan]")
+        
+    panel = Panel(table, title="[green]Breach History", expand=False)
     console.print(panel)
 
