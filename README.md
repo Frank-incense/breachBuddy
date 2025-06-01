@@ -88,8 +88,8 @@ lib/
 ## Setup Instructions
 1. **Clone the repository**
     ```
-    git clone https://github.com/yourusername/breachbuddy.git
-    cd breachbuddy
+    git clone https://github.com/Frank-incense/breachBuddy.git
+    cd breachBuddy
     ```
 2. **Create and activate a virtual environment and install dependencies**
     ```
