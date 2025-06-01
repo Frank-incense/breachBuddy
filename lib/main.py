@@ -12,7 +12,8 @@ OPTIONS = """
     [1] 🔍 Check Email for Exposure
     [2] 🧪 Check Password for Exposure
     [3] 📚 View Past Breach History
-    [4] 🚪 Exit
+    [4] 👤 Manage Account
+    [5] 🚪 Exit
     """
 ADMIN = """
     [1] 🔍 Check Email for Exposure
@@ -81,7 +82,19 @@ def command_call(choice, user):
                 pass
 
         elif choice == "4":
-            exit()
+            console.clear()
+            print("""
+            [1] Edit User
+            [2] Delete user
+            [3] Back
+            """)
+            choose = console.input("Choose an option: ")
+            if choose == '1':
+                user.update_user()
+            elif choose == '2':
+                delete_user(user=user)
+            else:
+                pass
         elif choice == "5":
             exit()
         else:

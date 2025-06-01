@@ -1,5 +1,4 @@
-from db.models import User, EmailCheck
-from tabulate import tabulate
+from db.models import User, EmailCheck, PasswordCheck
 import click
 from rich.console import Console
 from rich.table import Table
@@ -51,9 +50,9 @@ def check_email(user):
 def render_dash(user):
     print("Printing report")
     email = user.get_email_checks(EmailCheck)
-    password = user.get_password_checks()
-    breaches = sum([e.no_of_breaches for e in email])
-    
+    password = user.get_password_checks(PasswordCheck)
+    breaches = sum([e.no_of_breaches for e in email]) if email else 0
+
     console = Console()
     console.clear()
 
@@ -63,8 +62,8 @@ def render_dash(user):
     table = Table(show_header=False, box=None, padding=(0, 1))
     table.add_row("👤 [bold]User[/bold]", f"[cyan]{user.username}[/cyan]")
     table.add_row("📅 [bold]Last Check[/bold]", f"[yellow] {email[0].date_checked if email else 0} [/yellow]")
-    table.add_row("📧 [bold]Emails Scanned[/bold]", str(len(email)))
-    table.add_row("🔑 [bold]Passwords Scanned[/bold]", str(len(password)))
+    table.add_row("📧 [bold]Emails Scanned[/bold]", f"{str(len(email))if email else 0}")
+    table.add_row("🔑 [bold]Passwords Scanned[/bold]", f"{str(len(password))if password else 0}")
     table.add_row("🧨 [bold]Breaches Detected[/bold]", f"[red]{breaches}[/red]")
 
     panel = Panel(table, title="[green]User Summary", expand=False)
@@ -80,11 +79,12 @@ def render_breachs(user):
     console.print(title)
     
     table = Table(show_header=False, box=None, padding=(0, 1))
-    for e in email:
-        print(e)
-        breaches = e.breaches
-        for breach in breaches:
-            table.add_row(f"[bold]{breach.name}[/bold]", f"[cyan]{breach.domain}[/cyan]")
+    if email: 
+        for e in email:
+            print(e)
+            breaches = e.breaches
+            for breach in breaches:
+                table.add_row(f"[bold]{breach.name}[/bold]", f"[cyan]{breach.domain}[/cyan]")
         
     panel = Panel(table, title="[green]Breach History", expand=False)
     console.print(panel)

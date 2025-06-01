@@ -69,15 +69,12 @@ class User(Base):
         return  users if users else None
     
     
-    def get_password_checks(self):
-        statement = select(type(self).username, PasswordCheck.hash, 
-            PasswordCheck.checkedAt, PasswordCheck.hash_count).select_from(User).join(
-                PasswordCheck, PasswordCheck.user_id == User.id
-            )
-        rows = session.execute(statement)
-        return [row for row in rows] if rows else None
+    def get_password_checks(self, cls):
+        passwords = session.query(cls).filter_by(user_id=self.id).all()
+        
+        return [row for row in passwords] if passwords else None
     
-    def get_email_checks(self,cls):
+    def get_email_checks(self, cls):
         emails = session.query(cls).filter_by(user_id=self.id).all()
         
         return [row for row in emails] if emails else None
@@ -87,6 +84,16 @@ class User(Base):
 
     def email_check(self):
         checkEmail(self)
+    
+    def update_user(self):
+        name = input("Kindly input a new name: ")
+        user = session.query(type(self)).filter_by(id=self.id)
+        user.update(
+            {
+                User.username: name
+            }
+        )
+        session.commit()
 
 class PasswordCheck(Base):
 

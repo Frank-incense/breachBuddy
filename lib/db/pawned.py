@@ -38,6 +38,7 @@ def checkPassword(user):
             if password_hash.upper() == password_hash[0:5].upper()+pre:
                 print(password_hash, "=", password_hash[0:5]+pre )
                 pass_count = int(suf)
+                
                 PasswordCheck.create_password(
                     id= user.id,
                     hashcount = pass_count,
@@ -56,8 +57,10 @@ def checkEmail(user):
     emailcheck = re.compile(email_pattern)
     email = ""
     count = 0
+    
     while not emailcheck.match(email):
         email = input("Please input your email address: ")
+        
         if not emailcheck.match(email):
             print("Kindly input a correct email format.")
     
@@ -73,15 +76,18 @@ def checkEmail(user):
             
     except HTTPError as http:
         print(f"HTTP error: {http}")
+    
     else:
         emails = email_res.json()
         from .models import EmailCheck, Breach
         breach = []
+        
         for em in emails:
-            print(em['Name'])
             breach.append(Breach.create_breach(name=em['Name'],domain=em['Domain'], breachDate=em['BreachDate'], exposedData=", ".join(em['DataClasses'])))
             count += 1
+
         found = EmailCheck.find_email(em = email)
+        
         if not found:
             EmailCheck.create_email(email=email, num_of_breaches=count, id=user.id, breach=breach)
         else:
