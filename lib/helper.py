@@ -9,7 +9,8 @@ def create_user():
     click.echo("You are adding a new user to the the database")
     username = input("Input a user name: ")
     user = User.create_user( username )
-    return f"Success: {user.username} has been created." if user else "Error creating user."
+    print(f"Success: {user.username} has been created." if user else "Error creating user.")
+    return user
 
 def delete_user(user):
     print("Your are deleting a user from the database.")
@@ -81,13 +82,16 @@ def render_breachs(user):
     console.print(title)
     
     table = Table(show_header=False, box=None, padding=(0, 1))
+    li = []
     if email: 
         for e in email:
-            print(e)
             breaches = e.breaches
+            
             for breach in breaches:
-                table.add_row(f"[bold]{breach.name}[/bold]", f"[cyan]{breach.domain}[/cyan]")
+                if breach not in li:
+                    li.append(breach)
+                    table.add_row(f"[bold]{breach.name}[/bold]", f"[cyan]{breach.domain}[/cyan]")
         
-    panel = Panel(table, title="[green]Breach History", expand=False)
-    console.print(panel)
+        panel = Panel(table, title="[green]Breach History", expand=False)
+        console.print(panel)
 

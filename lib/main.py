@@ -1,8 +1,10 @@
+
 from helper import (check_email, check_password, create_user, render_breachs,
                     see_users, render_dash, get_user, delete_user)
 from pyfiglet import Figlet
 from rich.console import Console
 import getpass
+
 console = Console()
 
 fig = Figlet(font="slant")
@@ -30,7 +32,7 @@ def login():
     print("Check whether your emails and passwords are exposed through leaks.")
     isUser = input("Are you a user [Y/N]: ")
     if isUser.lower() == "n":
-        create_user()
+        user = create_user()
     elif isUser.lower() == "y":
         id = getpass.getpass("Kindly input your id and press enter: ")
 
@@ -114,7 +116,7 @@ def command_call(choice, user):
 if __name__ == "__main__":
     user = login()
     
-    
+
     while True:
         render_dash(user)
         choice = menu(user)

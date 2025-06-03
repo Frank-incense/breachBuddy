@@ -29,7 +29,7 @@ This tool is intended to promote security awareness and make it easier for indiv
 
     - Password hash checks
 
-- reated a many-to-many relationship between email_checks and breaches
+- Created a many-to-many relationship between email_checks and breaches
 
 - Ensured data persistence and user-based separation of checks
 
@@ -86,22 +86,24 @@ lib/
 ```
 
 ## Setup Instructions
-1. **Clone the repository**
+1. **Clone the repository.**
     ```
     git clone https://github.com/Frank-incense/breachBuddy.git
     cd breachBuddy
     ```
-2. **Create and activate a virtual environment and install dependencies**
+2. **Create and activate a virtual environment and install dependencies.**
     ```
     pipenv install && pipenv shell
     ```
-3. **Set up the database**
+3. **Set up the database.**
+
+    Change directory to lib/db  and then run:
     ```
     alembic upgrade head
     ```
-4. **Run the CLI app**
+4. **Run the CLI app.**
     ```
-    python lib/main.py
+    python ../../lib/main.py
     ```
 ## Features
 
@@ -117,7 +119,7 @@ lib/
 
 - User registration/authentication via CLI (planned)
 
-## Sample Use Case
+## Sample Use Case.
 
 1. User enters email to check:
 
