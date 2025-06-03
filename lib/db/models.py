@@ -2,9 +2,9 @@
 from sqlalchemy import (create_engine, Table, ForeignKey, select, Column, Integer, String, DateTime, func)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref, sessionmaker
-from lib.db.pawned import checkPassword, checkEmail
+from .pawned import checkPassword, checkEmail
 
-engine = create_engine('sqlite:///lib/db/pawned.db')
+engine = create_engine('sqlite:///./pawned.db')
 Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -123,8 +123,6 @@ class PasswordCheck(Base):
     def delete_passcheck(cls, id):
         session.query(cls).filter_by(id=id).delete()
         session.commit()
-
-
 
 mail_breachs = Table(
     'mail_breachs',
