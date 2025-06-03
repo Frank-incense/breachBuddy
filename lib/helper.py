@@ -17,6 +17,8 @@ def delete_user(user):
     id = console.input("[red]Input user id to be deleted: ")
     User.delete_user(id=int(id))
     print(f"User {user.username} has been deleted from the database.")
+    print(f"Goodbye: {user}.")
+    exit()
 
 def see_users():
     print("Printing all system users.")

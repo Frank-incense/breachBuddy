@@ -55,7 +55,7 @@ class User(Base):
 
     @classmethod
     def find_by_id(cls, id):
-        user = session.query(cls).filter_by(id=int(id))
+        user = session.query(cls).filter_by(id=int(id)).first()
         return user
     
     @classmethod

@@ -33,12 +33,19 @@ def login():
         create_user()
     elif isUser.lower() == "y":
         id = getpass.getpass("Kindly input your id and press enter: ")
-        name =input("Kindly input your username: ")
-        user = get_user(int(id))
-        if user:
-            console.print(f"[yellow]Welcome back: {name}.")
-        else:
-            console.print(f"[red]User: {name} not found. Input correct details.")
+
+        matched = False
+        while not matched:
+            name =input("Kindly input your username: ")
+            user = get_user(int(id))
+    
+            if user.username == name:
+                console.print(f"[yellow]Welcome back: {name}.")
+                matched = True
+                break
+            
+            else:
+                console.print(f"[red]User: {name} not found. Input correct details.")
     
     return user
 
@@ -96,6 +103,7 @@ def command_call(choice, user):
             else:
                 pass
         elif choice == "5":
+            console.print(f"Goodbye {user.username} Keep safe.")
             exit()
         else:
             raise ValueError("Kindly input provided input options")
@@ -104,8 +112,9 @@ def command_call(choice, user):
 
 
 if __name__ == "__main__":
-    user = login().first()
-    print(user.username)
+    user = login()
+    
+    
     while True:
         render_dash(user)
         choice = menu(user)
