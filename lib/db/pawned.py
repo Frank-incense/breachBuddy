@@ -86,7 +86,7 @@ def checkEmail(user):
             breach.append(Breach.create_breach(name=em['Name'],domain=em['Domain'], breachDate=em['BreachDate'], exposedData=", ".join(em['DataClasses'])))
             count += 1
 
-        found = EmailCheck.find_email(em = email)
+        found = EmailCheck.find_email(em = email).first()
         
         if not found:
             EmailCheck.create_email(email=email, num_of_breaches=count, id=user.id, breach=breach)
