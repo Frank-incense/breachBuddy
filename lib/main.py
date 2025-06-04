@@ -34,14 +34,16 @@ def login():
     if isUser.lower() == "n":
         user = create_user()
     elif isUser.lower() == "y":
-        id = getpass.getpass("Kindly input your id and press enter: ")
 
         matched = False
         while not matched:
-            name =input("Kindly input your username: ")
+            id = getpass.getpass("Kindly input your id and press enter: ")
+            
             user = get_user(int(id))
-    
-            if user.username == name:
+            name =input("Kindly input your username: ")
+            if not user:
+                console.print(f"[red]Error: User id:{id} does not exist")
+            elif user.username == name:
                 console.print(f"[yellow]Welcome back: {name}.")
                 matched = True
                 break
